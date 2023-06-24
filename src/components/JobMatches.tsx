@@ -1,64 +1,102 @@
 
 import {useParams} from 'react-router-dom'
-import { useEffect, useState } from 'react';
-import axios from 'axios'
+
+
 import {
-   TableContainer,
-   Table,
-   TableHead,
-   TableBody,
-   TableRow,
+
    TableCell,
-   Paper,
-   Button,
+
  } from "@mui/material";
- import data from "./products.json";
 
 
-const JobMatches = () =>{
 
-    const {id} = useParams();
-    const [matches, setMatches] = useState({} );
+ interface Job {
+   jobId: string;
+   jobTitle: {
+     name: string;
+     imageUrl: string;
+   };
+   company: {
+     name: string;
+     address: {
+       formattedAddress: string;
+       zoneId: string;
+     };
+     reportTo?: {
+       name: string;
+       phone?: string;
+     };
+   };
+   wagePerHourInCents: number;
+   milesToTravel: number;
+   shifts: {
+     startDate: string;
+     endDate: string;
+   }[];
+   branch: string;
+   branchPhoneNumber: string;
+   requirements?: string[];
+ }
 
-    useEffect(() => {
-        axios(`https://test.swipejobs.com/api/worker/7f90df6e-b832-44e2-b624-3143d428001f/matches`).then(({ data }) => {
-           if (data) {
-              setMatches(data);
-           } else {
-              window.alert('Theres no matches for this user');
-           }
-        });
-        return setMatches({});
-     }, []);
-    
-console.log( matches);
+ interface Props {
+   jobs: Job[];
+ }
 
-    return (
-        <>
-        
-        <div>
-         
 
-      {
-         matches.map((match)=> (
+ const JobMatches: React.FC<Props> = ({ jobs }) => {
+  console.log(jobs);
+   return (
+     <div>
+      
+
+      {jobs.map((job) => (
+        <div key={job.jobId}>
+          <h2>{job.jobTitle.name}</h2>
+          <img src={job.jobTitle.imageUrl} alt={job.jobTitle.name} />
+          <p>Company: {job.company.name}</p>
+          <p>Address: {job.company.address.formattedAddress}</p>
+          <p>Zone ID: {job.company.address.zoneId}</p>
+          {job.company.reportTo && (
             <div>
-          
-            <TableCell>{match.jobId}</TableCell>
+              <p>Report To: {job.company.reportTo.name}</p>
+              <p>Phone: {job.company.reportTo.phone}</p>
             </div>
-             ))
-            
-      }
-    </div>
+          )}
+          <p>Wage per Hour: {job.wagePerHourInCents / 100}</p>
+          <p>Miles to Travel: {job.milesToTravel}</p>
+          <p>Branch: {job.branch}</p>
+          <p>Branch Phone Number: {job.branchPhoneNumber}</p>
+          {job.requirements && (
+            <div>
+              <p>Requirements:</p>
+              <ul>
+                {job.requirements.map((requirement) => (
+                  <li key={requirement}>{requirement}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <p>Shifts:</p>
+          <ul>
+            {job.shifts.map((shift, index) => (
+              <li key={index}>
+                Start Date: {shift.startDate}, End Date: {shift.endDate}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+
+
+     </div>
+   );
+ };
  
+ export default JobMatches;
 
 
-    
-        
 
-    </>
-    )
-};
 
-export default JobMatches;
+ 
 
 

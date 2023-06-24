@@ -10,6 +10,7 @@ import {
 
 
 import JobMatches from './components/JobMatches'
+import JobMatchesParent from './components/JobMatchesParent'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -18,7 +19,7 @@ function App() {
     <>
      <Container>
       <Routes>
-        <Route path="/" element={<JobMatches />} />
+        <Route path="/" element={<JobMatchesParent />} />
  
       </Routes>
     </Container>
